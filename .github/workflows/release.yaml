@@ -34,30 +34,17 @@ jobs:
           echo "Version ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}" > VERSION-ME.txt
           # Add more file modifications as needed
 
-      - name: Install aws-cfn-template-flip
+      - name: Update Version in Cloudforrmation
         if: ${{ steps.release.outputs.release_created }}
         run: |
+          # Install Dependencies
           python3 -m pip install --upgrade pip
           python3 -m pip install cfn_flip
-
-      # Convert YAML to JSON
-      - name: Convert YAML to JSON
-        if: ${{ steps.release.outputs.release_created }}
-        run: |
+          # Update Version
           cfn-flip -j template.yaml template.json
-
-      # Update the version using jq
-      - name: Update version with jq
-        if: ${{ steps.release.outputs.release_created }}
-        run: |
           jq ".Mappings.ComponentVersions.Major.id = \"${{ steps.release.outputs.tag_name }}\"" template.json > template.json.tmp && mv template.json.tmp template.json
-
-      # Convert JSON back to YAML and overwrite the original template.yaml
-      - name: Convert JSON back to YAML
-        if: ${{ steps.release.outputs.release_created }}
-        run: |
           cfn-flip -y template.json template.yaml
-          
+
       # Commit and push the changes
       - name: Commit changes
         if: ${{ steps.release.outputs.release_created }}

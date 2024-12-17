@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: BOBO Balancer
+Description: BOBO Balancer Tested
 Metadata:
   Name: BOBO-Balancer
   StagingStackName: staging--bobo-balancer
