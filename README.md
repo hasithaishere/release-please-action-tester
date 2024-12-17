@@ -60,11 +60,11 @@ If you manually run the workflow with new_version=V1.3.0, the workflow:
 2. Updates ComponentVersions.Major.id to V1.3.0.
 3. Converts the template back to YAML (overwriting template.yaml).
 
-##Further Customization
+## Further Customization
 - You can adjust parameters in the deploy.yml workflow to fit your environment.
 - If you use different versioning strategies (e.g., pulling version from tags or environment variables), you can modify the set_version step in the workflow.
 
-#Troubleshooting
+## Troubleshooting
 - Validation Errors:
 If aws cloudformation validate-template fails, ensure the updated template is still valid YAML and that the Mappings structure is correct.
 
