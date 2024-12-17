@@ -1,0 +1,42 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+
+name: Release Live
+jobs:
+  create_release:
+    needs: audit
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: simple
+          default-branch: 'main'
+      # Only run the following steps if a release was created
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      # Add your custom file modification step here
+      - name: Update additional file
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          # Example: Update version in another file
+          echo "Version ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}" > VERSION-ME.txt
+          # Add more file modifications as needed
+          
+      # Commit and push the changes
+      - name: Commit changes
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add VERSION-ME.txt
+          git commit -m "chore: update VERSION-ME.txt for ${{ steps.release.outputs.tag_name }}"
+          git push
