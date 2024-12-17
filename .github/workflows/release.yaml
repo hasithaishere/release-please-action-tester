@@ -34,20 +34,29 @@ jobs:
           echo "Version ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}" > VERSION-ME.txt
           # Add more file modifications as needed
 
-      # Install yq for YAML manipulation
-      - name: Install yq
+      - name: Install aws-cfn-template-flip
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.35.2/yq_linux_amd64 -O /usr/local/bin/yq
-          sudo chmod +x /usr/local/bin/yq
+          python3 -m pip install --upgrade pip
+          python3 -m pip install cfn_flip
 
-      # Update the version in the CloudFormation template
-      # This command uses yq to update the `ComponentVersions.Major.id` field.
-      - name: Update template version
+      # Convert YAML to JSON
+      - name: Convert YAML to JSON
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          yq e -i ".Mappings.ComponentVersions.Major.id = \"${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}\"" template.yaml
-        shell: bash
+          cfn-flip -j template.yaml template.json
+
+      # Update the version using jq
+      - name: Update version with jq
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          jq ".Mappings.ComponentVersions.Major.id = \"${{ steps.release.outputs.tag_name }}\"" template.json > template.json.tmp && mv template.json.tmp template.json
+
+      # Convert JSON back to YAML and overwrite the original template.yaml
+      - name: Convert JSON back to YAML
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          cfn-flip -y template.json template.yaml
           
       # Commit and push the changes
       - name: Commit changes
