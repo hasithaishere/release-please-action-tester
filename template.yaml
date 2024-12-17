@@ -15,7 +15,7 @@ Parameters:
 Mappings:
   ComponentVersions:
     Major:
-      id: v1.0.2
+      id: v1.0.3
 Resources:
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
