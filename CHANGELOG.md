@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/hasithaishere/release-please-action-tester/compare/v1.0.0...v1.0.1) (2024-12-17)
+
+
+### Bug Fixes
+
+* Update code ([379d62c](https://github.com/hasithaishere/release-please-action-tester/commit/379d62cf7e55ab97ac6eac4493a27b02df980512))
+* Update issue ([fe16a61](https://github.com/hasithaishere/release-please-action-tester/commit/fe16a611ea29ffdde5b1f69e1887f8d45f7584f1))
+
 ## 1.0.0 (2024-12-17)
 
 
