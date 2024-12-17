@@ -36,6 +36,7 @@ jobs:
 
       # Install yq for YAML manipulation
       - name: Install yq
+        if: ${{ steps.release.outputs.release_created }}
         run: |
           sudo wget https://github.com/mikefarah/yq/releases/download/v4.35.2/yq_linux_amd64 -O /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
@@ -43,6 +44,7 @@ jobs:
       # Update the version in the CloudFormation template
       # This command uses yq to update the `ComponentVersions.Major.id` field.
       - name: Update template version
+        if: ${{ steps.release.outputs.release_created }}
         run: |
           yq e -i ".Mappings.ComponentVersions.Major.id = \"${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}\"" template.yaml
         shell: bash
