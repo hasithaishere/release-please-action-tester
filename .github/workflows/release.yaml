@@ -33,6 +33,19 @@ jobs:
           # Example: Update version in another file
           echo "Version ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}" > VERSION-ME.txt
           # Add more file modifications as needed
+
+      # Install yq for YAML manipulation
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/download/v4.35.2/yq_linux_amd64 -O /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+
+      # Update the version in the CloudFormation template
+      # This command uses yq to update the `ComponentVersions.Major.id` field.
+      - name: Update template version
+        run: |
+          yq e -i ".Mappings.ComponentVersions.Major.id = \"${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}\"" template.yaml
+        shell: bash
           
       # Commit and push the changes
       - name: Commit changes
@@ -41,5 +54,6 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add VERSION-ME.txt
+          git add template.yaml
           git commit -m "chore: update VERSION-ME.txt for ${{ steps.release.outputs.tag_name }}"
           git push
