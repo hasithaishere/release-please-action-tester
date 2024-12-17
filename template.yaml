@@ -1,25 +1,21 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "BOBO Balancer"
-
 Metadata:
   Name: "BOBO-Balancer"
   StagingStackName: "staging--bobo-balancer"
   ProductionStackName: "production--bobo-balancer"
-
 Parameters:
   Environment:
     Type: String
     AllowedValues:
-    - "staging"
-    - "production"
+      - "staging"
+      - "production"
   CertificateArn:
     Type: String
-
 Mappings:
   ComponentVersions:
     Major:
-      id: "V1.2.3"
-
+      id: "1.0.1"
 Resources:
   LoadBalancer:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
@@ -28,21 +24,17 @@ Resources:
       Scheme: "internet-facing"
       Type: "application"
       Subnets:
-      - Fn::ImportValue:
-          !FindInMap [PublicSubnet01, !Ref Environment, "id"]
-      - Fn::ImportValue:
-          !FindInMap [PublicSubnet02, !Ref Environment, "id"]
-      - Fn::ImportValue:
-          !FindInMap [PublicSubnet03, !Ref Environment, "id"]
+        - Fn::ImportValue: !FindInMap [PublicSubnet01, !Ref Environment, "id"]
+        - Fn::ImportValue: !FindInMap [PublicSubnet02, !Ref Environment, "id"]
+        - Fn::ImportValue: !FindInMap [PublicSubnet03, !Ref Environment, "id"]
       SecurityGroups:
-      - Fn::ImportValue:
-          !FindInMap [SecurityGroupALB, !Ref Environment, "id"]
+        - Fn::ImportValue: !FindInMap [SecurityGroupALB, !Ref Environment, "id"]
       LoadBalancerAttributes:
-      - Key: "access_logs.s3.enabled"
-        Value: true
-      - Key: "access_logs.s3.bucket"
-        Value: "application--log"
-      - Key: "access_logs.s3.prefix"
-        Value: !Sub "logs/alb/${Environment}/access-log"
-      - Key: "deletion_protection.enabled"
-        Value: true
+        - Key: "access_logs.s3.enabled"
+          Value: true
+        - Key: "access_logs.s3.bucket"
+          Value: "application--log"
+        - Key: "access_logs.s3.prefix"
+          Value: !Sub "logs/alb/${Environment}/access-log"
+        - Key: "deletion_protection.enabled"
+          Value: true
