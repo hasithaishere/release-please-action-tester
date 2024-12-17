@@ -16,7 +16,6 @@ jobs:
         id: release
         with:
           release-type: simple
-          default-branch: 'main'
       # Only run the following steps if a release was created
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
